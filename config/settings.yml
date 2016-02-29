@@ -1,0 +1,4 @@
+plugins:
+  weekly_email_report_enabled:
+    default: true
+    client: true
