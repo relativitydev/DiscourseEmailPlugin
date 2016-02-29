@@ -6,9 +6,9 @@
 enabled_site_setting :weekly_email_report_enabled
 
 after_initialize do
-    
-    puts "this runs"
 
+    require_dependency 'email/sender'
+    
     class ::Jobs::WeeklyReportJob < Jobs::Scheduled
         every 30.seconds
         
@@ -58,4 +58,10 @@ Date.today.next_week(:monday).in(6.00 * 3600) # Next monday @ 6:00 am
         end
     end
     WeeklyMailReport.new.perform
+
+# The code below successfully sends a test email programmatically.
+# Had issues sending it from the console, but that might be something else.
+message = TestMailer.send_test("pluginemailtest@example.com")
+Email::Sender.new(message, :test_message).send
+
 =end
