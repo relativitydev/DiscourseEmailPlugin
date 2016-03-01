@@ -5,15 +5,47 @@
 
 enabled_site_setting :weekly_email_report_enabled
 
+RECIPIENTS = [
+    "mrobustelli@kcura.com",
+    "gscholtes@kcura.com",
+    "jsmits@kcura.com"
+]
+
+PATH = File.dirname(path)
+
 after_initialize do
 
     require_dependency 'email/sender'
+    require_dependency 'email/message_builder'
+    
+    class ::WeeklyReportMailer < ::ActionMailer::Base
+        default from: SiteSetting.notification_email
+    
+        def send_report_to(recipient, metrics)
+            mail(to: recipient, subject: weekly_subject) { |f|
+                f.text { render file: File.join(view_path, "send_report_to.text.erb") }
+                f.html { render file: File.join(view_path, "send_report_to.html.erb") }
+            }
+        end
+        
+        def weekly_subject
+            "[#{Date.today}] DevHelp metrics"
+        end
+        
+        def view_path
+            File.join(PATH, "app", "views", "weekly_report_mailer")
+        end
+    end
     
     class ::Jobs::WeeklyReportJob < Jobs::Scheduled
         every 30.seconds
         
+        RECIPIENTS = RECIPIENTS
+        
         def execute(args)
-            puts "TEST"
+            RECIPIENTS.each { |recipient|
+                WeeklyReportMailer.send_report_to(recipient, nil).deliver_now
+            }
         end
     end
     
