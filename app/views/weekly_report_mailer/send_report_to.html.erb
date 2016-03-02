@@ -1,1 +1,78 @@
-test 1
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <style>
+      tr:nth-child(even) {
+        background-color: #eeeeee;
+        border: none;
+      }
+      td {
+        padding-bottom: 4px;
+      }
+      a:link {
+        text-decoration: none;
+      }
+      a:visited {
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      a:active {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <p>DevHelp metrics from
+    <b><%= 1.week.ago.to_date %></b>
+    to <b><%= Date.today %></b></p>
+    <hr />
+    <table cellspacing="0" cellpadding="0">
+      <tr>
+        <td>New topics: </td>
+        <td><%= @metrics[:new_topics].size %></td>
+      </tr>
+      <tr>
+        <td>Topics without responses: </td>
+        <td><%= @metrics[:no_response].size %></td>
+      </tr>
+      <tr>
+        <td>
+          <ul>
+            <% @metrics[:no_response].each do |topic| %>
+              <li><a href="<%= @hostroot %>/t/<%= topic.slug %>/<%= topic.id %>">
+              <%= topic.title %></a></li>
+            <% end %>
+          </ul>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Average response time: </td>
+        <td><%= @metrics[:average_response_time] %> </td>
+      </tr>
+      <tr>
+        <td><%= @metrics[:solved] %> topics marked solved
+        (<%= @metrics[:new_topics].size - @metrics[:solved] %> unmarked)</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Top 4 posters:</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>
+          <ol>
+            <% @metrics[:top_posters].each do |user|%>
+              <li><a href="<%= @hostroot %>/users/<%= user %>">
+              <%= user %></a></li>
+            <% end %>
+          </ol>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+  </body>
+</html>
