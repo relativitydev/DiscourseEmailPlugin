@@ -54,7 +54,7 @@ end
 
 =begin
 # List of new topics from the last week
-Topic.where("current_timestamp - created_at < INTERVAL '1 week'")
+Topic.where("current_timestamp - created_at < INTERVAL '1 week' and subtype is NULL")
 
 # List of new topics without any replies from the last week
 Topic.where("posts_count <= 1 and current_timestamp - created_at < INTERVAL '1 week'")
@@ -67,7 +67,7 @@ lst = lotftlw.where("posts_count > 1")
 avg = 0
 if lst.size > 0
     avg = lst.inject(0) { |acc, topic|
-        post_time = Post.where(:topic_id => topic.id).sort_by { |post|
+        post_time = Post.where(topic_id: topic.id).sort_by { |post|
             post.created_at.to_i
         }[1].created_at.to_i
         topic_time = topic.created_at.to_i
@@ -75,6 +75,13 @@ if lst.size > 0
     } / lst.size
 end 
 avg # Gives time in seconds
+
+# Get number of topics from the last week that were marked as solved
+TopicCustomField.where("current_timestamp - created_at < INTERVAL '1 week'").where(name: "accepted_answer_post_id").where("topic_id IN (?)", lotftlw.select(:id)).size
+
+# Get 4 most active users
+posts = Post.where("current_timestamp - created_at < INTERVAL '1 week'")
+posts.map { |p| p.username }.each_with_object(Hash.new(0)){ |m,h| h[m] += 1 }.sort_by{ |k,v| -v }.map { |k, v| k }[0,4]
 
 # Scheduling a task
 Date.today.next_week(:monday).in(6.00 * 3600) # Next monday @ 6:00 am
