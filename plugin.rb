@@ -10,9 +10,7 @@ RECIPIENTS = [
     "gscholtes@kcura.com",
     "jsmits@kcura.com"
 ]
-
-HOSTROOT = "http://localhost:4000"
-
+HOSTROOT = "https://devhelp.kcura.com"
 PATH = File.dirname(path)
 
 after_initialize do
@@ -44,7 +42,7 @@ after_initialize do
     end
     
     class ::Jobs::WeeklyReportJob < Jobs::Scheduled
-        every 30.seconds
+        every 1.week
         
         include ActionView::Helpers::DateHelper
         
