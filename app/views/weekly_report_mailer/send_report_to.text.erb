@@ -1,1 +1,18 @@
-test 2
+DevHelp metrics from <%= 1.week.ago.to_date %> to <%= Date.today %>
+--------------------------------------------------------------------
+
+New topics:  <%= @metrics[:new_topics].size %>
+
+Topics without responses:  <%= @metrics[:no_response].size %>
+<% @metrics[:no_response].each do |topic| %>
+ * <%= topic.title %> | <%= @hostroot %>/t/<%= topic.slug %>/<%= topic.id %>
+<% end %>
+
+Average response time:  <%= @metrics[:average_response_time] %>
+
+<%= @metrics[:solved] %> topics marked solved (<%= @metrics[:new_topics].size - @metrics[:solved] %> unmarked)
+
+Top 4 posters:
+<% @metrics[:top_posters].each do |user|%>
+ * <%= user %> | <%= @hostroot %>/users/<%= user %>
+<% end %>
