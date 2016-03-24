@@ -66,6 +66,19 @@
         text-decoration: none;
       }
       
+      #category-data tr > td:nth-child(2n) {
+        color: #919191;
+      }
+      
+      #category-data tr > td:nth-child(3) {
+        color: #919191;
+        font-weight: bold;
+      }
+      
+      #category-data tr > td:nth-child(5) {
+        color: #bfbfbf;
+      }
+      
       .badge-category {
         color: #ffffff;
         padding: 2px 5px 2px 5px;
@@ -115,18 +128,25 @@
         <td></td>
       </tr>
       <tr>
-        <td>Top 4 posters:</td>
+        <td>Top 5 posters:
+        <span style="float: right;">Top 5 topic creators:
+        </span></td>
         <td></td>
       </tr>
       <tr>
         <td>
-          <ol>
+          <ol style="float: left;">
             <% @metrics[:top_posters].each do |user|%>
-              <li><a href="<%= @hostroot %>/users/<%= user %>">
-              <%= user %></a></li>
+              <li><a href="<%= @hostroot %>/users/<%= user[:username] %>">
+              <%= user[:username] %></a> (<%= user[:posts] %>)</li>
             <% end %>
           </ol>
-        </td>
+          <ol style="float: right;">
+            <% @metrics[:top_creators].each do |user|%>
+              <li><a href="<%= @hostroot %>/users/<%= user[:username] %>">
+              <%= user[:username] %></a> (<%= user[:topics] %>)</li>
+            <% end %>
+          </ol>
         <td></td>
       </tr>
     </table>
@@ -136,7 +156,7 @@
         <th>Average response time</th>
         <th>Percent promise-compliant</th>
         <th>Response percent</th>
-        <th>Sample size</th>
+        <th>Topics</th>
       </tr></thead>
       <tbody>
       <% @metrics[:table].each do |row| %>
