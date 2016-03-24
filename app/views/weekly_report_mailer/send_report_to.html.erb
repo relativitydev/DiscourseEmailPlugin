@@ -3,25 +3,81 @@
   <head>
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
     <style>
-      tr:nth-child(even) {
+      html {
+        color: #222;
+        font-family: Helvetica,Arial,sans-serif;
+        font-size: 14px;
+        line-height: 19px;
+        background-color: #fff;
+        overflow-y: scroll;
+        direction: ltr;
+        padding-left: 5%;
+        padding-right: 5%;
+      }
+      
+      table {
+        padding-left: 5%;
+        padding-right: 5%;
+      }
+    
+      #scalar-data tr:nth-child(even) {
         background-color: #eeeeee;
         border: none;
       }
-      td {
+      #scalar-data td {
         padding-bottom: 4px;
+        padding-right: 15px;
       }
-      a:link {
+      #scalar-data a:link {
         text-decoration: none;
       }
-      a:visited {
+      #scalar-data a:visited {
         text-decoration: none;
       }
-      a:hover {
+      #scalar-data a:hover {
         text-decoration: underline;
       }
-      a:active {
+      #scalar-data a:active {
         text-decoration: underline;
       }
+      
+      #category-data {
+        width: 100%;
+        border-spacing: 0;
+        display: table;
+        border-color: grey;
+      }
+      #category-data th {
+        text-align: left;
+        font-weight: normal;
+        font-size: 1em;
+        padding: 12px 5px;
+        color: #919191;
+        border-bottom: 3px solid #e9e9e9;
+      }
+      #category-data td {
+        border-bottom: 1px solid #e9e9e9;
+        padding: 12px 5px;
+      }
+      #category-data tr:first-child > td:first-child {
+        width: 25%;
+      }
+      #category-data a {
+        text-decoration: none;
+      }
+      
+      .badge-category {
+        color: #ffffff;
+        padding: 2px 5px 2px 5px;
+        font-weight: bold;
+        font-size: 0.857em;
+      }
+      .badge-category-parent {
+        padding: 2px 2px 2px 3px;
+        font-size: 0.857em;
+        margin-left: 20px;
+      }
+      
     </style>
   </head>
   <body>
@@ -29,7 +85,7 @@
     <b><%= 1.week.ago.to_date %></b>
     to <b><%= Date.today %></b></p>
     <hr />
-    <table cellspacing="0" cellpadding="0">
+    <table cellspacing="0" cellpadding="0" id="scalar-data">
       <tr>
         <td>New topics: </td>
         <td><%= @metrics[:new_topics].size %></td>
@@ -73,6 +129,35 @@
         </td>
         <td></td>
       </tr>
+    </table>
+    <table id="category-data">
+      <thead><tr>
+        <th>Category</th>
+        <th>Average response time</th>
+        <th>Percent promise-compliant</th>
+        <th>Response percent</th>
+        <th>Sample size</th>
+      </tr></thead>
+      <tbody>
+      <% @metrics[:table].each do |row| %>
+        <tr>
+          <td>
+            <% if row[:parent] %>
+              <a href = "<%= @hostroot %>/c/<%= row[:parent].slug %>/<%= row[:category].slug %>">
+              <span class="badge-category-parent" style="background-color: #<%= row[:parent].color %>"></span>
+            <% else %>
+              <a href = "<%= @hostroot %>/c/<%= row[:category].slug %>">
+            <% end %>
+            <span class="badge-category" style="background-color: #<%= row[:category].color %>"><%= row[:category].name %></span>
+            </a>
+          </td>
+          <td><%= row[:avg_response_time] %></td>
+          <td><%= row[:percent_response_compliant] %></td>
+          <td><%= row[:response_percent] %></td>
+          <td><%= row[:sample_size] %></td>
+        </tr>
+      <% end %>
+      </tbody>
     </table>
   </body>
 </html>

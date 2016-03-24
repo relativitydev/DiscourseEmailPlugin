@@ -53,6 +53,7 @@ after_initialize do
             metrics[:average_response_time] = average_response_time(metrics[:new_topics])
             metrics[:solved] = solved(metrics[:new_topics])
             metrics[:top_posters] = top_posters(4)
+            metrics[:table] = grab_table
             
             RECIPIENTS.each { |recipient|
                 WeeklyReportMailer.send_report_to(recipient, metrics).deliver_now
@@ -103,6 +104,34 @@ after_initialize do
                 |k, v| k
             }[0,limit]
         end
+
+        def grab_table
+            table = []
+            Category.select(:id, :name, :slug, :color, :parent_category_id).each { |category|
+                parent = nil
+                if not category.parent_category_id.nil?
+                    parent = Category.find(category.parent_category_id)
+                end
+                table << {
+                    category: category,
+                    avg_response_time: distance_of_time_in_words(rand(1000)),
+                    percent_response_compliant: sprintf("%0.1f %", 100*rand),
+                    response_percent: sprintf("%0.1f %", 100*rand),
+                    sample_size: rand(100),
+                    color: category.color,
+                    parent: parent
+                }
+            }
+            # Sorts by parent categories, and then by subcategories under each parent
+            table.sort_by { |row|
+                name = ""
+                if row[:parent]
+                    name = row[:parent].name.downcase
+                end
+                name + row[:category].name.downcase
+            }
+        end
+
     end
     
 end
