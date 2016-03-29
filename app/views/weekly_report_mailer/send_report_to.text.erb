@@ -1,4 +1,4 @@
-DevHelp metrics from <%= 1.week.ago.to_date %> to <%= Date.today %>
+Discourse metrics from <%= SiteSetting.weekly_email_report_interval.days.ago.to_date %> to <%= Date.today %>
 --------------------------------------------------------------------
 
 New topics:  <%= @metrics[:new_topics].size %>
@@ -12,12 +12,12 @@ Average response time:  <%= @metrics[:average_response_time] %>
 
 <%= @metrics[:solved] %> topics marked solved (<%= @metrics[:new_topics].size - @metrics[:solved] %> unmarked)
 
-Top 5 posters:
+Top <%= SiteSetting.weekly_email_report_top_user_count %> posters:
 <% @metrics[:top_posters].each do |user|%>
  * <%= user[:username] %> | <%= @hostroot %>/users/<%= user[:posts] %>
 <% end %>
 
-Top 5 topic creators:
+Top <%= SiteSetting.weekly_email_report_top_user_count %> topic creators:
 <% @metrics[:top_creators].each do |user|%>
  * <%= user[:username] %> | <%= @hostroot %>/users/<%= user[:topics] %>
 <% end %>

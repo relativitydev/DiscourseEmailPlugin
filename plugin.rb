@@ -5,19 +5,16 @@
 
 enabled_site_setting :weekly_email_report_enabled
 
-RECIPIENTS = [
-    "mrobustelli@kcura.com",
-    "gscholtes@kcura.com",
-    "jsmits@kcura.com"
-]
 PATH = File.dirname(path)
-INTERVAL = 1.week
-COMPLIANCE = 3600 * 4 # 4 hours
 
 after_initialize do
 
     require_dependency 'email/sender'
     require_dependency 'email/message_builder'
+    
+    if SiteSetting.weekly_email_report_interval < 1
+        warn "WARNING: weekly_email_report_interval setting is less than 1 day"
+    end
     
     class ::WeeklyReportMailer < ::ActionMailer::Base
         default from: SiteSetting.notification_email
@@ -34,42 +31,52 @@ after_initialize do
         private
         
         def weekly_subject(time)
-            "[#{time.to_date}] DevHelp metrics"
+            "[#{time.to_date}] Discourse metrics"
         end
         
         def view_path
+            # Hack. Rails will not look in the plugin's app/views directory
+            # for views.  This is a workaround.
             File.join(PATH, "app", "views", "weekly_report_mailer")
         end
     end
     
     class ::Jobs::WeeklyReportJob < Jobs::Scheduled
-        every INTERVAL
+        every SiteSetting.weekly_email_report_interval.days
         
         include ActionView::Helpers::DateHelper
         
         def execute(args)
-            @latest_midnight = Time.now.midnight
-        
-            topic_list = new_topics
-            metrics = {
-                new_topics: topic_list,
-                no_response: no_response(topic_list),
-                average_response_time: average_response_time(topic_list),
-                solved: solved(topic_list),
-                top_posters: top_posters(5),
-                top_creators: top_topic_creators(5),
-                table: gather_category_statistics(topic_list)
-            }
-            
-            RECIPIENTS.each { |recipient|
-                WeeklyReportMailer.send_report_to(recipient, metrics, @latest_midnight).deliver_now
-            }
+            if SiteSetting.weekly_email_report_enabled?
+                @latest_midnight = Time.now.midnight
+                @interval = SiteSetting.weekly_email_report_interval.days
+                
+                topic_list = new_topics
+                metrics = {
+                    new_topics: topic_list,
+                    no_response: no_response(topic_list),
+                    average_response_time: average_response_time(topic_list),
+                    solved: solved(topic_list),
+                    top_posters: top_posters(SiteSetting.weekly_email_report_top_user_count),
+                    top_creators: top_topic_creators(SiteSetting.weekly_email_report_top_user_count),
+                    table: gather_category_statistics(topic_list)
+                }
+                
+                recipients = SiteSetting.weekly_email_report_recipients.split(",")
+                recipients.map! { |recipient|
+                    recipient.strip
+                }
+                
+                recipients.each { |recipient|
+                    WeeklyReportMailer.send_report_to(recipient, metrics, @latest_midnight).deliver_now
+                }
+            end
         end
         
         private
         
         def new_topics
-            Topic.where(created_at: (@latest_midnight - INTERVAL)..@latest_midnight, subtype: nil)
+            Topic.where(created_at: (@latest_midnight - @interval)..@latest_midnight, subtype: nil)
         end
         
         def no_response(topics)
@@ -96,14 +103,14 @@ after_initialize do
         end
         
         def solved(topics)
-            TopicCustomField.where(created_at: (@latest_midnight - INTERVAL)..@latest_midnight)
+            TopicCustomField.where(created_at: (@latest_midnight - @interval)..@latest_midnight)
                 .where(name: "accepted_answer_post_id")
                 .where("topic_id IN (?)", topics.select(:id))
                 .size
         end
         
         def top_posters(limit)
-            posts = Post.where(created_at: (@latest_midnight - INTERVAL)..@latest_midnight)
+            posts = Post.where(created_at: (@latest_midnight - @interval)..@latest_midnight)
             posts.map { |p|
                 p.username
             }.each_with_object(Hash.new(0)) { |username, occurrences|
@@ -116,7 +123,7 @@ after_initialize do
         end
         
         def top_topic_creators(limit)
-            topics = Topic.where(created_at: (@latest_midnight - INTERVAL)..@latest_midnight)
+            topics = Topic.where(created_at: (@latest_midnight - @interval)..@latest_midnight)
             topics.map { |t|
                 User.find(t.user_id).username
             }.each_with_object(Hash.new(0)) { |username, occurrences|
@@ -147,7 +154,7 @@ after_initialize do
                         # Second post is the first reply (first post is the topic itself -- not a reply)
                         post_time = Post.where(topic: topic).order(:created_at).limit(2)[1].created_at.to_i
                         topic_time = topic.created_at.to_i
-                        post_time - topic_time < COMPLIANCE
+                        post_time - topic_time < 60 * SiteSetting.weekly_email_report_compliance
                     }
                     percent_compliant = compliant.length.to_f / samples.length
                     percent_compliant = sprintf("%0.1f %", 100*percent_compliant)
@@ -175,7 +182,7 @@ after_initialize do
     end
     
     # ---------- Send an email immediately when the plugin loads ----------------
-    # ---------- otherwise we'll have to wait a week to get a report ------------
+    # ---------- otherwise we might have to wait a week to get a report ------------
     ::Jobs::WeeklyReportJob.new.execute({})
     # ---------------------------------------------------------------------------
     

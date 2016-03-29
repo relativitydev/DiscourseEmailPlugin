@@ -1,3 +1,7 @@
 en:
   site_settings:
-    weekly_email_report_enabled: "Send a weekly metrics report email"
+    weekly_email_report_enabled: "Send regularly scheduled metrics report emails"
+    weekly_email_report_recipients: "Comma separated list of recipients of the metrics report emails"
+    weekly_email_report_interval: "Time (in days) between metric report emails (the job service must be restarted after changing this)"
+    weekly_email_report_compliance: "SLA delivery time (in minutes)"
+    weekly_email_report_top_user_count: "The email report includes metrics about the top *n* posters on the site. This sets *n*"

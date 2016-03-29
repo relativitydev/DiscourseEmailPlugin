@@ -94,8 +94,8 @@
     </style>
   </head>
   <body>
-    <p>DevHelp metrics from
-    <b><%= 1.week.ago.to_date %></b>
+    <p>Discourse metrics from
+    <b><%= SiteSetting.weekly_email_report_interval.days.ago.to_date %></b>
     to <b><%= Date.today %></b></p>
     <hr />
     <table cellspacing="0" cellpadding="0" id="scalar-data">
@@ -128,8 +128,8 @@
         <td></td>
       </tr>
       <tr>
-        <td>Top 5 posters:
-        <span style="float: right;">Top 5 topic creators:
+        <td>Top <%= SiteSetting.weekly_email_report_top_user_count %> posters:
+        <span style="float: right;">Top <%= SiteSetting.weekly_email_report_top_user_count %> topic creators:
         </span></td>
         <td></td>
       </tr>
@@ -148,6 +148,10 @@
             <% end %>
           </ol>
         <td></td>
+      </tr>
+      <tr>
+        <td>SLA time:</td>
+        <td><%= SiteSetting.weekly_email_report_compliance %> minutes</td>
       </tr>
     </table>
     <table id="category-data">

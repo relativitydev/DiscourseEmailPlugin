@@ -1,4 +1,11 @@
 plugins:
   weekly_email_report_enabled:
     default: true
-    client: true
+  weekly_email_report_recipients:
+    default: "test@example.com"
+  weekly_email_report_interval:
+    default: !!float 7
+  weekly_email_report_compliance:
+    default: 240
+  weekly_email_report_top_user_count:
+    default: 5
