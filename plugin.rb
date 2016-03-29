@@ -87,7 +87,7 @@ after_initialize do
             if topics_size > 0
                 avg = topics.inject(0) { |acc, topic|
                     # Second post is the first reply (first post is the topic itself -- not a reply)
-                    post_time = Post.where(topic: topic).order(:created_at)[1].created_at.to_i
+                    post_time = Post.where(topic: topic).order(:created_at).limit(2)[1].created_at.to_i
                     topic_time = topic.created_at.to_i
                     acc + post_time - topic_time
                 } / topics_size
@@ -145,7 +145,7 @@ after_initialize do
                     response_percent = sprintf("%0.1f %", 100*selected.length.to_f / samples.length)
                     compliant = selected.select { |topic|
                         # Second post is the first reply (first post is the topic itself -- not a reply)
-                        post_time = Post.where(topic: topic).order(:created_at)[1].created_at.to_i
+                        post_time = Post.where(topic: topic).order(:created_at).limit(2)[1].created_at.to_i
                         topic_time = topic.created_at.to_i
                         post_time - topic_time < COMPLIANCE
                     }

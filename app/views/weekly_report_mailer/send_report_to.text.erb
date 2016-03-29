@@ -12,7 +12,14 @@ Average response time:  <%= @metrics[:average_response_time] %>
 
 <%= @metrics[:solved] %> topics marked solved (<%= @metrics[:new_topics].size - @metrics[:solved] %> unmarked)
 
-Top 4 posters:
+Top 5 posters:
 <% @metrics[:top_posters].each do |user|%>
- * <%= user %> | <%= @hostroot %>/users/<%= user %>
+ * <%= user[:username] %> | <%= @hostroot %>/users/<%= user[:posts] %>
 <% end %>
+
+Top 5 topic creators:
+<% @metrics[:top_creators].each do |user|%>
+ * <%= user[:username] %> | <%= @hostroot %>/users/<%= user[:topics] %>
+<% end %>
+
+Show blocked content to see additional metrics.
