@@ -35,7 +35,7 @@ after_initialize do
         private
         
         def weekly_subject(time)
-            "[#{time}] DevHelp metrics"
+            "[#{time.to_date}] DevHelp metrics"
         end
         
         def view_path
@@ -70,7 +70,7 @@ after_initialize do
         private
         
         def new_topics
-            Topic.where(created_at: (Time.now.midnight - INTERVAL)..Time.now.midnight, subtype: nil)
+            Topic.where(created_at: (@latest_midnight - INTERVAL)..@latest_midnight, subtype: nil)
         end
         
         def no_response(topics)
@@ -97,14 +97,14 @@ after_initialize do
         end
         
         def solved(topics)
-            TopicCustomField.where(created_at: (Time.now.midnight - INTERVAL)..Time.now.midnight)
+            TopicCustomField.where(created_at: (@latest_midnight - INTERVAL)..@latest_midnight)
                 .where(name: "accepted_answer_post_id")
                 .where("topic_id IN (?)", topics.select(:id))
                 .size
         end
         
         def top_posters(limit)
-            posts = Post.where(created_at: (Time.now.midnight - INTERVAL)..Time.now.midnight)
+            posts = Post.where(created_at: (@latest_midnight - INTERVAL)..@latest_midnight)
             posts.map { |p|
                 p.username
             }.each_with_object(Hash.new(0)) { |username, occurrences|
@@ -117,7 +117,7 @@ after_initialize do
         end
         
         def top_topic_creators(limit)
-            topics = Topic.where(created_at: (Time.now.midnight - INTERVAL)..Time.now.midnight)
+            topics = Topic.where(created_at: (@latest_midnight - INTERVAL)..@latest_midnight)
             topics.map { |t|
                 User.find(t.user_id).username
             }.each_with_object(Hash.new(0)) { |username, occurrences|
