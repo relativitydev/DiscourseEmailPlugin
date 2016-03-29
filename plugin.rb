@@ -10,7 +10,6 @@ RECIPIENTS = [
     "gscholtes@kcura.com",
     "jsmits@kcura.com"
 ]
-HOSTROOT = "https://devhelp.kcura.com"
 PATH = File.dirname(path)
 INTERVAL = 1.week
 COMPLIANCE = 3600 * 4 # 4 hours
@@ -25,7 +24,7 @@ after_initialize do
     
         def send_report_to(recipient, metrics, time)
             @metrics = metrics
-            @hostroot = HOSTROOT
+            @hostroot = "#{SiteSetting.scheme}://#{GlobalSetting.hostname}"
             mail(to: recipient, subject: weekly_subject(time)) { |f|
                 f.text { render file: File.join(view_path, "send_report_to.text.erb") }
                 f.html { render file: File.join(view_path, "send_report_to.html.erb") }
