@@ -4,8 +4,12 @@ plugins:
   weekly_email_report_recipients:
     default: "test@example.com"
   weekly_email_report_interval:
-    default: !!float 7
+    default: 7
   weekly_email_report_compliance:
     default: 240
   weekly_email_report_top_user_count:
     default: 5
+  weekly_email_report_day_of_week:
+    default: "Monday"
+  weekly_email_report_time_of_day:
+    default: "6:00"

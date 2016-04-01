@@ -16,6 +16,58 @@ after_initialize do
         warn "WARNING: weekly_email_report_interval setting is less than 1 day"
     end
     
+    module ::WeeklyJobHelpers       
+        def self.report_time
+            items = SiteSetting.weekly_email_report_time_of_day.split(":")
+            if items.size == 2
+                hours = items.first.to_i
+                minutes = items.last.to_i
+                if (0...24).include? hours and (0...60).include? minutes 
+                else
+                    warn "WARNING: weekly_email_report_time_of_day has invalid format"
+                    return default_report_time
+                end
+            else
+                warn "WARNING: weekly_email_report_time_of_day has invalid format"
+                return default_report_time
+            end
+            return hours.hours + minutes.minutes
+        end
+        
+        def self.default_report_time
+            items = SiteSetting.defaults[:weekly_email_report_time_of_day].split(":")
+            hours = items.first.to_i
+            minutes = items.last.to_i
+            return hours.hours + minutes.minutes
+        end
+        
+        def self.weekday
+            case SiteSetting.weekly_email_report_day_of_week.downcase.strip
+            when "sunday"
+                0
+            when "monday"
+                1
+            when "tuesday"
+                2
+            when "wednesday"
+                3
+            when "thursday"
+                4
+            when "friday"
+                5
+            when "saturday"
+                6
+            else
+                warn "WARNING: invalid weekday for weekly_email_report_day_of_week"
+                0
+            end
+        end
+        
+        def self.is_correct_weekday
+            Date.today.wday == weekday
+        end    
+    end
+    
     class ::WeeklyReportMailer < ::ActionMailer::Base
         default from: SiteSetting.notification_email
     
@@ -41,13 +93,13 @@ after_initialize do
         end
     end
     
-    class ::Jobs::WeeklyReportJob < Jobs::Scheduled
-        every SiteSetting.weekly_email_report_interval.days
+    class ::Jobs::MetricsReportJob < Jobs::Scheduled
+        daily at: ::WeeklyJobHelpers.report_time
         
         include ActionView::Helpers::DateHelper
         
         def execute(args)
-            if SiteSetting.weekly_email_report_enabled?
+            if (SiteSetting.weekly_email_report_enabled? and ::WeeklyJobHelpers.is_correct_weekday) or args[:force]
                 @latest_midnight = Time.now.midnight
                 @interval = SiteSetting.weekly_email_report_interval.days
                 
@@ -183,7 +235,7 @@ after_initialize do
     
     # ---------- Send an email immediately when the plugin loads ----------------
     # ---------- otherwise we might have to wait a week to get a report ------------
-    ::Jobs::WeeklyReportJob.new.execute({})
+    ::Jobs::MetricsReportJob.new.execute({force: true})
     # ---------------------------------------------------------------------------
     
 end
