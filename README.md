@@ -55,3 +55,7 @@ Every setting except for `weekly email report time of day` can be changed by an 
 Here is a sample report (viewed with MailCatcher):
 
 ![](screenshots/sample-report-1.png)
+
+### License
+
+MIT
