@@ -2,6 +2,7 @@
 # about: Weekly email report for various metrics
 # version: 0.0.1
 # authors: Garrett Scholtes
+# url: https://github.com/kCura/DiscourseEmailPlugin
 
 enabled_site_setting :weekly_email_report_enabled
 
