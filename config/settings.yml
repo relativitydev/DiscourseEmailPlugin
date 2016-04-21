@@ -13,3 +13,5 @@ plugins:
     default: "Monday"
   weekly_email_report_time_of_day:
     default: "6:00"
+  domain:
+    default: "https://example.com"

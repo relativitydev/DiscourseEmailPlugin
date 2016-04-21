@@ -7,4 +7,4 @@ en:
     weekly_email_report_top_user_count: "The email report includes metrics about the top *n* posters on the site. This sets *n*"
     weekly_email_report_day_of_week: "Day of week to send the report (English weekday)"
     weekly_email_report_time_of_day: "Time of day to send report (hh:mm, 24 hour format). Must restart jobs service after changing this setting."
-    
+    domain: "Your Discourse domain name. Include http(s). Do not include trailing forward slash."

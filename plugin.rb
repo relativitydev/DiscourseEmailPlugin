@@ -74,7 +74,7 @@ after_initialize do
     
         def send_report_to(recipient, metrics, time)
             @metrics = metrics
-            @hostroot = "#{SiteSetting.scheme}://#{GlobalSetting.hostname}"
+            @hostroot = "#{SiteSetting.domain}"
             mail(to: recipient, subject: weekly_subject(time)) { |f|
                 f.text { render file: File.join(view_path, "send_report_to.text.erb") }
                 f.html { render file: File.join(view_path, "send_report_to.html.erb") }
