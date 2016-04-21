@@ -239,4 +239,28 @@ after_initialize do
     ::Jobs::MetricsReportJob.new.execute({force: true})
     # ---------------------------------------------------------------------------
     
+    module ::DiscourseReportJob
+        class Engine < ::Rails::Engine
+            isolate_namespace DiscourseReportJob
+        end
+    end
+    
+    require_dependency 'application_controller'
+    class DiscourseReportJob::ReporterController < ::ApplicationController        
+        def send(*args)
+            ::Jobs::MetricsReportJob.new.execute({force: true})
+        end
+    end
+
+    DiscourseReportJob::Engine.routes.draw do
+        put 'trigger' => 'reporter#send'
+    end
+
+
+    add_admin_route 'report_job.title', 'report-job'
+        
+    Discourse::Application.routes.append do
+        mount ::DiscourseReportJob::Engine, at: '/admin/plugins/report-job', constraints: StaffConstraint.new
+    end
+    
 end
