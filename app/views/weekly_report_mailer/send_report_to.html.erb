@@ -172,7 +172,7 @@
       </tr></thead>
       <tbody>
       <% @metrics[:table].each do |row| %>
-        <% if row[:sample_size] > 0 || row[:parent].nil? %>
+        <% if row[:sample_size] > 0 || row[:parent].nil? || SiteSetting.weekly_email_report_show_empty_results%>
           <tr>
             <td>
               <% if row[:parent] %>
