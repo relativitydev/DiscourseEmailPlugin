@@ -20,7 +20,7 @@
         padding-right: 5%;
       }
     
-      #scalar-data tr:nth-child(even) {
+      #scalar-data tr.odd {
         background-color: #eeeeee;
         border: none;
       }
@@ -35,10 +35,13 @@
         text-decoration: none;
       }
       #scalar-data a:hover {
-        text-decoration: underline;
+        text-decoration: none;
       }
       #scalar-data a:active {
-        text-decoration: underline;
+        text-decoration: none;
+      }
+      #scalar-data a {
+        text-decoration: none;
       }
       
       #category-data {
@@ -88,7 +91,12 @@
       .badge-category-parent {
         padding: 2px 2px 2px 3px;
         font-size: 0.857em;
-        margin-left: 20px;
+        width: 5px;
+      }
+      .badge-category-parent-hidden {
+        padding: 2px 2px 2px 20px;
+        font-size: 0.857em;
+        width: 5px;
       }
       
     </style>
@@ -103,7 +111,7 @@
         <td>New topics: </td>
         <td><%= @metrics[:new_topics].size %></td>
       </tr>
-      <tr>
+      <tr class="odd">
         <td>Topics without responses: </td>
         <td><%= @metrics[:no_response].size %></td>
       </tr>
@@ -118,7 +126,7 @@
         </td>
         <td></td>
       </tr>
-      <tr>
+      <tr class="odd">
         <td>Average response time: </td>
         <td><%= @metrics[:average_response_time] %> </td>
       </tr>
@@ -127,7 +135,7 @@
         (<%= @metrics[:new_topics].size - @metrics[:solved] %> unmarked)</td>
         <td></td>
       </tr>
-      <tr>
+      <tr class="odd">
         <td>Top <%= SiteSetting.weekly_email_report_top_user_count %> posters:
         <span style="float: right;">Top <%= SiteSetting.weekly_email_report_top_user_count %> topic creators:
         </span></td>
@@ -149,7 +157,7 @@
           </ol>
         <td></td>
       </tr>
-      <tr>
+      <tr class="odd">
         <td>SLA time:</td>
         <td><%= SiteSetting.weekly_email_report_compliance %> minutes</td>
       </tr>
@@ -167,6 +175,7 @@
         <tr>
           <td>
             <% if row[:parent] %>
+              <span class="badge-category-parent-hidden">&#8193;</span>
               <a href = "<%= @hostroot %>/c/<%= row[:parent].slug %>/<%= row[:category].slug %>">
               <span class="badge-category-parent" style="background-color: #<%= row[:parent].color %>"></span>
             <% else %>
