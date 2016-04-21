@@ -172,23 +172,25 @@
       </tr></thead>
       <tbody>
       <% @metrics[:table].each do |row| %>
-        <tr>
-          <td>
-            <% if row[:parent] %>
-              <span class="badge-category-parent-hidden">&#8193;</span>
-              <a href = "<%= @hostroot %>/c/<%= row[:parent].slug %>/<%= row[:category].slug %>">
-              <span class="badge-category-parent" style="background-color: #<%= row[:parent].color %>"></span>
-            <% else %>
-              <a href = "<%= @hostroot %>/c/<%= row[:category].slug %>">
-            <% end %>
-            <span class="badge-category" style="background-color: #<%= row[:category].color %>"><%= row[:category].name %></span>
-            </a>
-          </td>
-          <td><%= row[:avg_response_time] %></td>
-          <td><%= row[:percent_response_compliant] %></td>
-          <td><%= row[:response_percent] %></td>
-          <td><%= row[:sample_size] %></td>
-        </tr>
+        <% if row[:sample_size] > 0 || row[:parent].nil? %>
+          <tr>
+            <td>
+              <% if row[:parent] %>
+                <span class="badge-category-parent-hidden">&#8193;</span>
+                <a href = "<%= @hostroot %>/c/<%= row[:parent].slug %>/<%= row[:category].slug %>">
+                <span class="badge-category-parent" style="background-color: #<%= row[:parent].color %>"></span>
+              <% else %>
+                <a href = "<%= @hostroot %>/c/<%= row[:category].slug %>">
+              <% end %>
+              <span class="badge-category" style="background-color: #<%= row[:category].color %>"><%= row[:category].name %></span>
+              </a>
+            </td>
+            <td><%= row[:avg_response_time] %></td>
+            <td><%= row[:percent_response_compliant] %></td>
+            <td><%= row[:response_percent] %></td>
+            <td><%= row[:sample_size] %></td>
+          </tr>
+        <% end %>
       <% end %>
       </tbody>
     </table>
