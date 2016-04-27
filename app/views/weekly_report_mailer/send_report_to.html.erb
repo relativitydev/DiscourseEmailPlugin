@@ -119,8 +119,20 @@
         <td>
           <ul>
             <% @metrics[:no_response].each do |topic| %>
-              <li><a href="<%= @hostroot %>/t/<%= topic.slug %>/<%= topic.id %>">
-              <%= topic.title %></a></li>
+              <li>
+                <% if row = @metrics[:table].find{|row| row[:category].id == topic.category_id} %>
+                  <% if row[:parent] %>
+                    <a href = "<%= @hostroot %>/c/<%= row[:parent].slug %>/<%= row[:category].slug %>">
+                    <span class="badge-category-parent" style="background-color: #<%= row[:parent].color %>"></span>
+                  <% else %>
+                    <a href = "<%= @hostroot %>/c/<%= row[:category].slug %>">
+                  <% end %>
+                  <span class="badge-category" style="background-color: #<%= row[:category].color %>"><%= row[:category].name %></span>
+                  </a>
+                <% end %>
+                <a href="<%= @hostroot %>/t/<%= topic.slug %>/<%= topic.id %>">
+                <%= topic.title %></a>
+              </li>
             <% end %>
           </ul>
         </td>
