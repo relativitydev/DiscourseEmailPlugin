@@ -172,6 +172,8 @@ after_initialize do
                 -count
             }.map { |username, count|
                 {username: username, posts: count}
+            }.select { |user|
+                user[:username] != "system"
             }[0,limit]
         end
         
@@ -185,6 +187,8 @@ after_initialize do
                 -count
             }.map { |username, count|
                 {username: username, topics: count}
+            }.select { |user|
+                user[:username] != "system"
             }[0,limit]
         end
         
