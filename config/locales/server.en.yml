@@ -8,4 +8,5 @@ en:
     weekly_email_report_day_of_week: "Day of week to send the report (English weekday)"
     weekly_email_report_time_of_day: "Time of day to send report (hh:mm, 24 hour format). Must restart jobs service after changing this setting."
     weekly_email_report_show_empty_results: "List categories without recent topics"
-    domain: "Your Discourse domain name. Include http(s). Do not include trailing forward slash."
+    weekly_email_report_domain: "Your Discourse domain name. Include http(s). Do not include trailing forward slash."
+    weekly_email_report_subject: "What to put as the email subject following the date"

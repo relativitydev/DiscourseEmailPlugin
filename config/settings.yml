@@ -15,5 +15,7 @@ plugins:
     default: "6:00"
   weekly_email_report_show_empty_results:
     default: false
-  domain:
+  weekly_email_report_domain:
     default: "https://example.com"
+  weekly_email_report_subject:
+    default: "Discourse metrics"
