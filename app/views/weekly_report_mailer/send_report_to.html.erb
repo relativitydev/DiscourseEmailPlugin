@@ -16,32 +16,44 @@
       }
       
       table {
-        padding-left: 5%;
+        padding-left: 1%;
         padding-right: 5%;
       }
+      
+      ol {
+        padding-left: 3%;
+      }
+      
+      a {
+        text-decoration: none;
+      }
     
-      #scalar-data tr.odd {
+      .scalar-data tr.odd {
         background-color: #eeeeee;
         border: none;
       }
-      #scalar-data td {
+      .scalar-data td {
         padding-bottom: 4px;
         padding-right: 15px;
       }
-      #scalar-data a:link {
+      .scalar-data a:link {
         text-decoration: none;
       }
-      #scalar-data a:visited {
+      .scalar-data a:visited {
         text-decoration: none;
       }
-      #scalar-data a:hover {
+      .scalar-data a:hover {
         text-decoration: none;
       }
-      #scalar-data a:active {
+      .scalar-data a:active {
         text-decoration: none;
       }
-      #scalar-data a {
+      .scalar-data a {
         text-decoration: none;
+      }
+      
+      .scalar-data {
+        width: 650px;
       }
       
       #category-data {
@@ -106,7 +118,7 @@
     <b><%= SiteSetting.weekly_email_report_interval.days.ago.to_date %></b>
     to <b><%= Date.today %></b></p>
     <hr />
-    <table cellspacing="0" cellpadding="0" id="scalar-data">
+    <table cellspacing="0" cellpadding="0" class="scalar-data">
       <tr>
         <td>New topics: </td>
         <td><%= @metrics[:new_topics].size %></td>
@@ -115,29 +127,30 @@
         <td>Topics without responses: </td>
         <td><%= @metrics[:no_response].size %></td>
       </tr>
-      <tr>
-        <td>
-          <ul>
-            <% @metrics[:no_response].each do |topic| %>
-              <li>
-                <% if row = @metrics[:table].find{|row| row[:category].id == topic.category_id} %>
-                  <% if row[:parent] %>
-                    <a href = "<%= @hostroot %>/c/<%= row[:parent].slug %>/<%= row[:category].slug %>">
-                    <span class="badge-category-parent" style="background-color: #<%= row[:parent].color %>"></span>
-                  <% else %>
-                    <a href = "<%= @hostroot %>/c/<%= row[:category].slug %>">
-                  <% end %>
-                  <span class="badge-category" style="background-color: #<%= row[:category].color %>"><%= row[:category].name %></span>
-                  </a>
-                <% end %>
-                <a href="<%= @hostroot %>/t/<%= topic.slug %>/<%= topic.id %>">
-                <%= topic.title %></a>
-              </li>
+    </table>
+    <table>
+      <% @metrics[:no_response].each do |topic| %>
+        <tr>
+          <td>&#8193;
+          <% if row = @metrics[:table].find{|row| row[:category].id == topic.category_id} %>
+            <% if row[:parent] %>
+              <a href = "<%= @hostroot %>/c/<%= row[:parent].slug %>/<%= row[:category].slug %>">
+              <span class="badge-category-parent" style="background-color: #<%= row[:parent].color %>">&nbsp;
+              </span><span class="badge-category" style="background-color: #<%= row[:category].color %>">&nbsp;<%= row[:category].name %>&nbsp;</span>
+            <% else %>
+              <a href = "<%= @hostroot %>/c/<%= row[:category].slug %>">
+              <span class="badge-category" style="background-color: #<%= row[:category].color %>">&nbsp;<%= row[:category].name %>&nbsp;</span>
             <% end %>
-          </ul>
-        </td>
-        <td></td>
-      </tr>
+            </a>
+          <% end %>
+          &#8193;</td><td>
+          <a href="<%= @hostroot %>/t/<%= topic.slug %>/<%= topic.id %>">
+          <%= topic.title %></a>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+    <table cellspacing="0" cellpadding="0" class="scalar-data">
       <tr class="odd">
         <td>Average response time: </td>
         <td><%= @metrics[:average_response_time] %> </td>
@@ -148,27 +161,29 @@
         <td></td>
       </tr>
       <tr class="odd">
-        <td>Top <%= SiteSetting.weekly_email_report_top_user_count %> posters:
-        <span style="float: right;">Top <%= SiteSetting.weekly_email_report_top_user_count %> topic creators:
-        </span></td>
+        <td>Top <%= SiteSetting.weekly_email_report_top_user_count %> posters:</td>
         <td></td>
       </tr>
-      <tr>
-        <td>
-          <ol style="float: left;">
-            <% @metrics[:top_posters].each do |user|%>
-              <li><a href="<%= @hostroot %>/users/<%= user[:username] %>">
-              <%= user[:username] %></a> (<%= user[:posts] %>)</li>
-            <% end %>
-          </ol>
-          <ol style="float: right;">
-            <% @metrics[:top_creators].each do |user|%>
-              <li><a href="<%= @hostroot %>/users/<%= user[:username] %>">
-              <%= user[:username] %></a> (<%= user[:topics] %>)</li>
-            <% end %>
-          </ol>
+    </table>
+    <ol>
+      <% @metrics[:top_posters].each do |user|%>
+        <li><a href="<%= @hostroot %>/users/<%= user[:username] %>">
+        <%= user[:username] %></a> (<%= user[:posts] %>)</li>
+      <% end %>
+    </ol>
+    <table cellspacing="0" cellpadding="0" class="scalar-data">
+      <tr class="odd">
+        <td>Top <%= SiteSetting.weekly_email_report_top_user_count %> topic creators:</td>
         <td></td>
       </tr>
+    </table>
+    <ol>
+      <% @metrics[:top_creators].each do |user|%>
+        <li><a href="<%= @hostroot %>/users/<%= user[:username] %>">
+        <%= user[:username] %></a> (<%= user[:topics] %>)</li>
+      <% end %>
+    </ol>
+    <table cellspacing="0" cellpadding="0" class="scalar-data">
       <tr class="odd">
         <td>SLA time:</td>
         <td><%= SiteSetting.weekly_email_report_compliance %> minutes</td>
@@ -190,11 +205,12 @@
               <% if row[:parent] %>
                 <span class="badge-category-parent-hidden">&#8193;</span>
                 <a href = "<%= @hostroot %>/c/<%= row[:parent].slug %>/<%= row[:category].slug %>">
-                <span class="badge-category-parent" style="background-color: #<%= row[:parent].color %>"></span>
+                <span class="badge-category-parent" style="background-color: #<%= row[:parent].color %>">&nbsp;
+                </span><span class="badge-category" style="background-color: #<%= row[:category].color %>">&nbsp;<%= row[:category].name %>&nbsp;</span>
               <% else %>
                 <a href = "<%= @hostroot %>/c/<%= row[:category].slug %>">
+                <span class="badge-category" style="background-color: #<%= row[:category].color %>">&nbsp;<%= row[:category].name %>&nbsp;</span>
               <% end %>
-              <span class="badge-category" style="background-color: #<%= row[:category].color %>"><%= row[:category].name %></span>
               </a>
             </td>
             <td><%= row[:avg_response_time] %></td>
