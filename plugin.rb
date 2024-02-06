@@ -1,4 +1,4 @@
-# name: report-job
+# name: relativity-report-job
 # about: Weekly email report for various metrics
 # version: 0.0.1
 # authors: Garrett Scholtes
