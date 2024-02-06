@@ -240,7 +240,7 @@ after_initialize do
     
     # ---------- Send an email immediately when the plugin loads ----------------
     # ---------- otherwise we might have to wait a week to get a report ------------
-    ::Jobs::MetricsReportJob.new.execute({force: true})
+    ::Jobs::MetricsReportJob.new.execute({force: true}) if Discourse.running_in_rack?
     # ---------------------------------------------------------------------------
     
     module ::DiscourseReportJob
