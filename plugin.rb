@@ -1,6 +1,6 @@
 # name: relativity-report-job
 # about: Weekly email report for various metrics
-# version: 0.0.1
+# version: 0.0.2
 # authors: Garrett Scholtes
 # url: https://github.com/kCura/DiscourseEmailPlugin
 
