@@ -1,6 +1,6 @@
-# name: report-job
+# name: relativity-report-job
 # about: Weekly email report for various metrics
-# version: 0.0.1
+# version: 0.0.2
 # authors: Garrett Scholtes
 # url: https://github.com/kCura/DiscourseEmailPlugin
 
@@ -206,7 +206,7 @@ after_initialize do
                 if samples.length > 0
                     art = average_response_time(tops, category)
                     selected = samples.where("posts_count > 1")
-                    response_percent = sprintf("%0.1f %", 100*selected.length.to_f / samples.length)
+                    response_percent = sprintf("%0.1f %%", 100*selected.length.to_f / samples.length)
                     compliant = selected.select { |topic|
                         # Second post is the first reply (first post is the topic itself -- not a reply)
                         post_time = Post.where(topic: topic).order(:created_at).limit(2)[1].created_at.to_i
@@ -214,7 +214,7 @@ after_initialize do
                         post_time - topic_time < 60 * SiteSetting.weekly_email_report_compliance
                     }
                     percent_compliant = compliant.length.to_f / samples.length
-                    percent_compliant = sprintf("%0.1f %", 100*percent_compliant)
+                    percent_compliant = sprintf("%0.1f %%", 100*percent_compliant)
                 end
                 table << {
                     category: category,
@@ -240,7 +240,7 @@ after_initialize do
     
     # ---------- Send an email immediately when the plugin loads ----------------
     # ---------- otherwise we might have to wait a week to get a report ------------
-    ::Jobs::MetricsReportJob.new.execute({force: true})
+    ::Jobs::MetricsReportJob.new.execute({force: true}) if Discourse.running_in_rack?
     # ---------------------------------------------------------------------------
     
     module ::DiscourseReportJob
